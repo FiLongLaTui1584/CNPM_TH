@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "8348720875",
+    "project_id": "cnpm-a5d08",
+    "storage_bucket": "cnpm-a5d08.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8348720875:android:3b9acb791bd3d08951a8ae",
+        "android_client_info": {
+          "package_name": "com.example.cnpm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCX-vCsNtCLUvaERDvU1hDchb10zbLcFc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
