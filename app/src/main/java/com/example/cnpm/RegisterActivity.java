@@ -17,9 +17,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -66,9 +71,18 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
+                    FirebaseUser user =mAuth.getCurrentUser();
                     Toast.makeText(getApplicationContext(),"Đăng kí thành công",Toast.LENGTH_SHORT).show();
+                    DocumentReference df =fStore.collection("Users").document(user.getUid());
+                    Map<String, Object> userInfo = new HashMap<>();
+                    userInfo.put("UserEmail", edtEmail.getText().toString());
+
+                    userInfo.put("MainUser","1");
+                    df.set(userInfo);
+
                     Intent i=new Intent(RegisterActivity.this, LoginActivity.class);
                     startActivity(i);
+                    finish();
                 }else {
                     Toast.makeText(getApplicationContext(),"Đăng kí thất bại",Toast.LENGTH_SHORT).show();
                 }

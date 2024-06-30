@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
@@ -18,11 +19,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -33,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView forgotPassword;
 
     FirebaseAuth mAuth;
+    FirebaseFirestore fstore;
     @Override
     protected void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,20 +131,41 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-         mAuth.signInWithEmailAndPassword(email,pass).addOnCompleteListener((new OnCompleteListener<AuthResult>() {
-             @Override
-             public void onComplete(@NonNull Task<AuthResult> task) {
-                 if(task.isSuccessful()){
-                     Toast.makeText(getApplicationContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
-                     Intent i=new Intent(LoginActivity.this, MainActivity.class);
-                     startActivity(i);
-                 }else {
-                     Toast.makeText(getApplicationContext(),"Đăng nhập thất bại",Toast.LENGTH_SHORT).show();
-                 }
-             }
-         }));
+        mAuth.signInWithEmailAndPassword(edtEmail.getText().toString(),edtPass.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                /*Toast.makeText(LoginActivity.this,"Đăng nhập thành công",Toast.LENGTH_SHORT).show();*/
+                checkUserAccessLevel(authResult.getUser().getUid());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(LoginActivity.this,"Đăng nhập thất bại",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+    private void checkUserAccessLevel(String uid) {
+        DocumentReference df=fstore.collection("Users").document(uid);
+        df.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Log.d("TAG","onSuccess: " + documentSnapshot.getData());
+                //check user hay admin
 
+                if(documentSnapshot.getString("MainUser" )!=null){
+                    Toast.makeText(LoginActivity.this,"MainUser đăng nhập thành công",Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                    finish();
+
+                }
+                if (documentSnapshot.getString("NormalUser")!=null){
+                    Toast.makeText(LoginActivity.this,"NormalUser đăng nhập thành công",Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                    finish();
+                }
+            }
+        });
+    }
     private void moRegister() {
         Intent intent=new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
@@ -146,5 +179,6 @@ public class LoginActivity extends AppCompatActivity {
         forgotPassword=findViewById(R.id.forgotPassword);
 
         mAuth=FirebaseAuth.getInstance();
+        fstore=FirebaseFirestore.getInstance();
     }
 }
