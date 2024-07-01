@@ -144,6 +144,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+    /*Ham check muc do truy cap*/
     private void checkUserAccessLevel(String uid) {
         DocumentReference df=fstore.collection("Users").document(uid);
         df.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
