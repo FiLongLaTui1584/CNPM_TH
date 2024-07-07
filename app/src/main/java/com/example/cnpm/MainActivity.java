@@ -19,7 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
-    AppCompatButton btnLogOut, btn_addUser, btnAddDM;
+    AppCompatButton btnLogOut, btn_addUser, btnWatchDM;
     FirebaseAuth mAuth;
     FirebaseFirestore fstore;
     @Override
@@ -33,13 +33,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addEvents() {
-        btnAddDM.setOnClickListener(new View.OnClickListener() {
+
+        btnWatchDM.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this,ListviewDMActivity.class);
+                Intent intent=new Intent(MainActivity.this,DanhMucActivity.class);
                 startActivity(intent);
             }
         });
+
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         btn_addUser=findViewById(R.id.btn_addUser);
         mAuth= FirebaseAuth.getInstance();
         fstore=FirebaseFirestore.getInstance();
-        btnAddDM=findViewById(R.id.btnAddDM);
+        btnWatchDM=findViewById(R.id.btnWatchDM);
     }
     private void checkUserAccessLevel(String uid) {
         DocumentReference df=fstore.collection("Users").document(uid);
