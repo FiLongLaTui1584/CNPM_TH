@@ -15,10 +15,10 @@
         android:theme="@style/Theme.CNPM"
         tools:targetApi="31">
         <activity
-            android:name=".DanhMucActivity"
+            android:name=".DetailActivity"
             android:exported="false" />
         <activity
-            android:name=".DetailActivity"
+            android:name=".DanhMucActivity"
             android:exported="false" />
         <activity
             android:name=".UploadActivity"

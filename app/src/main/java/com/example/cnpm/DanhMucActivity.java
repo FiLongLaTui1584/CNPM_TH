@@ -5,17 +5,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cnpm.Data.DataClass;
-import com.example.cnpm.modal.MyAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,19 +25,24 @@ import java.util.List;
 public class DanhMucActivity extends AppCompatActivity {
 
     FloatingActionButton fab;
-    DatabaseReference databaseReference;
-    ValueEventListener eventListener;
     RecyclerView recyclerView;
     List<DataClass> dataList;
-    MyAdapter adapter;
+    DatabaseReference databaseReference;
+    ValueEventListener eventListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_danh_muc);
 
-        recyclerView = findViewById(R.id.recyclerView);
         fab = findViewById(R.id.fab);
+
+        recyclerView = findViewById(R.id.recyclerView);
+
+        GridLayoutManager gridLayoutManager= new GridLayoutManager(DanhMucActivity.this,1);
+        recyclerView.setLayoutManager(gridLayoutManager);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(DanhMucActivity.this);
         builder.setCancelable(false);
         builder.setView(R.layout.progress_layout);
@@ -50,11 +51,14 @@ public class DanhMucActivity extends AppCompatActivity {
 
         dataList = new ArrayList<>();
 
-        adapter = new MyAdapter(DanhMucActivity.this, dataList);
+        MyAdapter adapter= new MyAdapter(dataList, DanhMucActivity.this);
         recyclerView.setAdapter(adapter);
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Danh Mục");
         dialog.show();
+
+
+
         eventListener = databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
